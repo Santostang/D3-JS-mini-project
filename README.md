@@ -22,3 +22,9 @@ There's an important result in statistics called the central limit theorem. It s
 ![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/normal%20distribution%20simulation%20-%20hw5/distribution1.png)
 
 ![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/normal%20distribution%20simulation%20-%20hw5/distribution2.png)
+
+4. **Simulate Projectile Motion**
+
+Simulate projectile motion under the influence of gravity using a finite approximation, where we estimate a ski jumper's position every 0.2 seconds. (This method was the original use for the ENIAC electronic computer.) Physics review: keep track of the position (displacement), velocity, and acceleration for the x and y dimensions separately.
+
+![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/simulate%20projectile%20motion/projectile.png)

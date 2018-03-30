@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>Song Tang, NetId:st883 </title>
+<link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v2.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<style>
+body { font-family: 'Barlow Condensed', Calibri, sans-serif; }
+svg { border: solid #ccc 1px; }
+</style>
+</head>
+<body>
+
+<svg height="400" width="400" id="Q3"></svg>
+<script>
+
+  XScale = d3.scaleLinear()
+  .domain([0, 100])
+  .range([20, 380]);
+
+  YScale = d3.scaleLinear()
+  .domain([0, -50])
+  .range([200, 380]);
+
+  var pathGenerator = d3.line()
+  .x(function (d) { return XScale(d.x); })
+  .y(function (d) { return YScale(d.y); });
+
+  var svg = d3.select("#Q3");
+  var g = svg.append("g");
+
+  g.append("path")
+    .attr("stroke", "black")
+    .attr("fill", "none")
+    .attr("stroke-width", 1)
+    .attr("d", "M 20 200 L 380 380");
+
+  
+  function trajectory(initialVelocity, angle, initialY) {
+    var dataArray = [];
+    var initialX = 0;
+    var xVelocity = initialVelocity * Math.cos(angle/180 * Math.PI);
+    var yVelocity = initialVelocity * Math.sin(angle/180 * Math.PI);
+    var xAcceleration = 0;
+    var yAcceleration = -9.8 / 5;
+    var x = 0;
+    var y = initialY;
+    var ground = 0;
+    dataArray.push({"ground":ground, "x":x, "y":y, "xVelocity":xVelocity, "yVelocity":yVelocity, "xAcceleration":xAcceleration, "yAcceleration":yAcceleration});
+    while (y > ground){
+      xVelocity = xVelocity + xAcceleration;
+      yVelocity = yVelocity + yAcceleration;
+      x = x + 0.2 * xVelocity;
+      y = y + 0.2 * yVelocity;
+      ground = x * -0.5;
+      dataArray.push({"ground":ground, "x":x, "y":y, "xVelocity":xVelocity, "yVelocity":yVelocity, "xAcceleration":xAcceleration, "yAcceleration":yAcceleration});
+    }
+    plotTrajectory(dataArray);
+
+    return dataArray;
+  }
+
+  function plotTrajectory(dataArray){
+    height = -1 * dataArray[dataArray.length-1]['ground'] + dataArray[0]['y']
+    width = dataArray[dataArray.length-1]['x']
+    distance = Math.sqrt(Math.pow(height,2) + Math.pow(width,2))
+
+    g.append("path")
+      .attr("stroke", "blue")
+      .attr("fill", "none")
+      .attr("stroke-width", 5)
+      .style("stroke-opacity", 0.25)
+      .attr("d", pathGenerator(dataArray));
+
+    g.append("text")
+    .attr("x", XScale(dataArray[dataArray.length-1]['x']))
+    .attr("y", YScale(dataArray[dataArray.length-1]['y']))
+    .text(distance.toFixed(2));
+  }
+
+  dataArray = trajectory(26, -7, 1);
+  dataArray = trajectory(35, -7, 1);
+  dataArray = trajectory(10, -7, 1);
+
+</script>
+
+
+
+
+</script>
+
+</body>
+</html>
