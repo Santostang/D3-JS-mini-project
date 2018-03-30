@@ -15,7 +15,10 @@ The task is to translate one graph in D3/JS to R. The file jobs.R creates a visu
 
 ![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/job%20data%20-%20from%20R%20to%20d3%20plot/job.png)
 
-3. **normal distribution simulation - hw5**
+3. **Distribution Simulation and central limit theorem - hw5**
 
 There's an important result in statistics called the central limit theorem. It says that, under fairly mild conditions, the mean of a random sample from a distribution behaves like a Gaussian random variable, even if the distribution you're sampling from behaves nothing like a Gaussian. We're going to see if this is true for a number of different probability distributions.
 
+![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/normal%20distribution%20simulation%20-%20hw5/distribution1.png)
+
+![MacDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/normal%20distribution%20simulation%20-%20hw5/distribution2.png)
