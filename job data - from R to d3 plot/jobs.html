@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>HTML/JS/D3 -> R</title>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+<svg />
+<script>
+
+var temperatures, yearSummary;
+
+function mutateRow(row) {
+  row["JobChange"] = Number(row["Value"].replace(/\(P\)/i,""));
+  row["Preliminary"] = row["Value"].includes("(P)");
+  row["Month"] = row["Period"].replace("M","");
+  row["Date"] = new Date(row["Year"], row["Month"], '01')
+  return row;
+}
+
+function callback(error, data) {
+  var cutoffDate = new Date('2007-01-01');
+  data = data.filter(function(d) {
+    return d.Date > cutoffDate;
+  })
+
+
+  var padding = 40;
+  // Now create a plot
+  var svg = d3.select("svg")
+  .attr("height", 300 + 2 * padding).attr("width", 400 + 2 * padding)
+  .append("g").attr("transform", "translate(" + padding + "," + padding + ")");
+  
+  // Scale the range of the data
+  var xScale = d3.scaleTime()
+                .domain(d3.extent(data, function(d) { return d.Date; }))
+                .range([0, 400]);
+
+  var yScale = d3.scaleLinear()
+              .domain( [d3.min(data, d => d.JobChange), d3.max(data, d => d.JobChange)] )
+              .range([300, 0]);
+  
+  // Add the valueline path.
+  var lineGenerator = d3.area()
+  .x(d => xScale(d.Date))
+  .y(d => yScale(d.JobChange));
+  
+  svg.append("path")
+  .attr("d", lineGenerator(data))
+  .style("stroke", "#000000")
+  .style("fill", "none");
+  
+  // Add the scatterplot
+    svg.selectAll("dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("r", 3)
+        .attr("fill", function(d) {
+          if (d.Preliminary == true){
+            return "blue";
+          }
+          else{
+            return "red";
+          }
+        })
+        .attr("cx", function(d) { return xScale(d.Date); })
+        .attr("cy", function(d) { return yScale(d.JobChange); });
+
+  // Add axes
+  svg.append("g").call(d3.axisLeft(yScale).ticks(3));
+  svg.append("g").call(d3.axisBottom(xScale).ticks(7))
+  .attr("transform", "translate(0," + (300) + ")");
+  
+  // Add axis labels
+  svg.append("text").attr("transform", "translate(0, -20)").text("Monthly Job Change");
+  svg.append("text").attr("transform", "rotate(270) translate(-170, -25)").text("JobChange");
+  svg.append("text").attr("transform", "translate(200, 330)").text("Date");
+}
+
+d3.csv("bls.txt", mutateRow, callback);
+
+</script>
+</body>
+</html>
