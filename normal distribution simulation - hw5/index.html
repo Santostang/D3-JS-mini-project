@@ -1,0 +1,262 @@
+<html>
+<head>
+<title>Song Tang, NetId:st883 </title>
+<link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v2.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<style>
+body { font-family: 'Barlow Condensed', Calibri, sans-serif; }
+svg { border: solid #ccc 1px; }
+</style>
+</head>
+<body>
+
+<h3>Distributions and histograms</h3>
+<h3>Q1</h3>
+<script>
+  // Question 1:
+  var height = 150;
+  var width = 300;
+  var padding = 25;
+
+  function plotHistogram(id, data) {
+    var svg = d3.select(id).append("svg")
+    .attr("height", height + 2 * padding)
+    .attr("width", width + 2 * padding);
+
+    g = svg.append("g").attr("transform", "translate(" + padding + "," + padding + ")");
+    
+    var xScale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range([0, width]);
+
+    var bins = d3.histogram()
+        .domain(xScale.domain())
+        .thresholds(20)
+        (data);
+
+    var yScale = d3.scaleLinear()
+        .domain([0, d3.max(bins, function(d) { return d.length; })])
+        .range([height, 0]);
+
+    var bar = g.selectAll(".bar")
+      .data(bins)
+      .enter().append("g")
+        .attr("class", "bar")
+        .attr("transform", function(d) { return "translate(" + xScale(d.x0) + "," + yScale(d.length) + ")"; });
+
+    bar.append("rect")
+        .attr("width", xScale(bins[1].x1) - xScale(bins[1].x0) - 1)
+        .attr("height", function(d) { return height - yScale(d.length); });
+
+    g.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale));
+
+    g.append("g")
+    .attr("transform", "translate(0, 0)")
+    .call(d3.axisLeft(yScale));
+  }
+</script>
+
+<h3>Q2 Normal distribution</h3>
+<div id="normal1"></div>
+<script>
+  // Question 2:
+  function gaussian(){
+    normalfunc = d3.randomNormal(0.0, 1.0)
+    return normalfunc();
+  }
+  function gaussian1000(){
+    var samples = [];
+    for (var i = 0; i < 1000; i++) {
+      samples.push(gaussian() +1);
+    }
+    return samples;
+  }
+  plotHistogram("#normal1", gaussian1000());
+</script>
+
+
+<h3>Q3 Normal distribution2</h3>
+<p>1. It has roughly the same shape as the plot from Problem 2, which looks like guassian distribution.</p>          
+<p>2. The x-scale is different, the first plot has a larger domain than the second plot, x-scale of first plot is around from -2 to 4.5 (you may get a different domain from 1000 samples), x-scale of second plot is from 0.9 to 1.1 (you may get a different domain from 1000 sample mean), which is close to the original mean with smaller variance.</p>
+<div id="normal2"></div>
+<script>
+  // Question 3:
+  var normal_mean = [];
+   for (var i = 0; i < 1000; i++) {
+    normal_mean.push(d3.mean(gaussian1000()));
+  }
+  plotHistogram("#normal2", normal_mean);
+</script>
+
+
+
+<h3>Q4 Lognormal distribution</h3>
+<div id="lognormal1"></div>
+<script>
+  function lognormal1000(){
+    var samples = [];
+    for (var i = 0; i < 1000; i++) {
+      samples.push(Math.exp(gaussian()));
+    }
+    return samples;
+  }
+  plotHistogram("#lognormal1", lognormal1000());
+</script>
+
+
+
+<h3>Q5 Lognormal distribution2</h3>
+<p>1. It doesn't have roughly the same shape as the plot from Problem 4, the histogram of sample mean distribution looks like guassian distribution, but the plot for problem 4 is lognormal distribution - right skewed.</p>          
+<p>2. The x-scale is different, the first plot has a larger domain and larger variance than the second plot: x-scale of first plot is around from 0 to 24 (you may get a different domain from 1000 samples), x-scale of second plot is from 1.2 to 1.9 (you may get a different domain from 1000 sample mean).</p>
+<div id="lognormal2"></div>
+<script>
+  var lognormal_mean = [];
+   for (var i = 0; i < 1000; i++) {
+    lognormal_mean.push(d3.mean(lognormal1000()));
+  }
+  plotHistogram("#lognormal2", lognormal_mean);
+</script>
+
+
+<h3>Q6 Exponential distribution</h3>
+<div id="exp1"></div>
+<script>
+  function exponential1000(){
+    var samples = [];
+    for (var i = 0; i < 1000; i++) {
+      samples.push(-Math.log(Math.random()));
+    }
+    return samples;
+  }
+  plotHistogram("#exp1", exponential1000());
+</script>
+
+
+<h3>Q7 Exponential distribution2</h3>
+<p>1. The previous histogram doesn't look like the histogram of sample mean distribution. The histogram of sample mean distribution looks like guassian distribution, but the previous histogram looks like Exponential distribution - right skewed.</p>          
+<p>2. The pattern is the mean of a random sample from a distribution behaves like a Gaussian random variable, even the distribution is not Gaussian. The x-scale is different, the first plot has a larger domain and larger variance than the second plot.</p>
+<div id="exp2"></div>
+<script>
+  var exponential_mean = [];
+   for (var i = 0; i < 1000; i++) {
+    exponential_mean.push(d3.mean(exponential1000()));
+  }
+  plotHistogram("#exp2", exponential_mean);
+</script>
+
+
+<h3>Q8 Gumbel distribution</h3>
+<div id="gumbel1"></div>
+<script>
+  function gumbel1000(){
+    var samples = [];
+    for (var i = 0; i < 1000; i++) {
+      samples.push(1.732455 * -Math.log(-Math.log(Math.random())));
+    }
+    return samples;
+  }
+  plotHistogram("#gumbel1", gumbel1000());
+</script>
+
+
+<h3>Q9 Gumbel distribution2</h3>
+<p>The previous histogram doesn't look like the histogram of sample mean distribution. The histogram of sample mean distribution looks like guassian distribution, but the previous histogram looks like Gumbel distribution - right skewed.</p> 
+<div id="gumbel2"></div>
+<script>
+  var exponential_mean = [];
+   for (var i = 0; i < 1000; i++) {
+    exponential_mean.push(d3.mean(exponential1000()));
+  }
+  plotHistogram("#gumbel2", exponential_mean);
+</script>
+
+
+<h3>Q10 Cauchy distribution</h3>
+<div id="cauchy1"></div>
+<script>
+  function cauchy1000(){
+    var samples = [];
+    for (var i = 0; i < 1000; i++) {
+      samples.push(gaussian() / gaussian());
+    }
+    return samples;
+  }
+  plotHistogram("#cauchy1", cauchy1000());
+</script>
+
+
+<h3>Q11 Cauchy distribution2</h3>
+<p>The histogram of the means from this distribution doesn't look like the histograms of means from Problems 3, 5, 7, and 9. For the x-axis, the histograms of means from Problems 3, 5, 7, and 9 looks like guassian distribution which is bell curve. But most of the data in the histogram of the means from this distribution is in these two bars.</p> 
+<div id="cauchy2"></div>
+<script>
+  var cauchy_mean = [];
+  for (var i = 0; i < 1000; i++) {
+    cauchy_mean.push(d3.mean(cauchy1000()));
+  }
+  plotHistogram("#cauchy2", cauchy_mean);
+</script>
+
+
+<h3>Q12 HSLa Colors</h3>
+<p id="Q12"></p>
+<div>
+  <label> Hue: </label><input id="hue_range" type="range" min="0" max="360" value="180" step="any">
+  <label> Opacity: </label><input id="opacity_range" type="range" min="0.0" max="1.0" value="0.5" step="0.1">
+</div>
+<script>
+  // Question 1:
+  var height = 500;
+  var width = 500;
+
+  var arr = [];
+  for (var i = 0; i < 11; i++) {
+    for (var j = 0; j < 11; j++) {
+      arr.push({
+        saturation: i*10,
+        lightness: j*10
+      });
+    }
+  }
+
+  var svg = d3.select("#Q12").append("svg")
+  .attr("height", height)
+  .attr("width", width);
+
+  var circles = svg.selectAll("circle")
+    .data(arr).enter()
+    .append("circle");
+
+  function showCircles(hue, opacity){
+    svg.selectAll("circle")
+    .attr("cx", function(d) { return d.saturation*4+30; })
+    .attr("cy", function(d) { return d.lightness*4+30; })
+    .attr("r", 20)
+    .attr("stroke", "#eee")
+    .attr("fill", function(d) {
+      return d3.hsl(hue, d.saturation/100, d.lightness/100, opacity);});    
+  }
+
+  var hue = 180;
+  var opacity = 0.5;
+  
+  d3.select("#opacity_range").on("input", function() {
+    opacity = this.value;
+    showCircles(hue, opacity);
+    });
+
+  d3.select("#hue_range").on("input", function() {
+    hue = this.value;
+    showCircles(hue, opacity);
+    });
+  showCircles(hue, opacity);
+
+</script>
+
+
+
+
+
+</body>
+</html>
