@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>HTML/JS/D3 -> R</title>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+<svg />
+<script>
+
+/** 
+  Recreate the following steps in R using dplyr and ggplot.
+  Look at the comments for names that may suggest interesting functions.
+  Your R code should be much shorter.
+  */
+
+var temperatures, yearSummary;
+
+function mutateRow(row) {
+  // Set Value and Anomaly fields to numbers, but leave the Date as a string.
+  // Hint: Look at the arguments to read_csv().
+  row["Value"] = Number(row["Value"]);
+  row["Anomaly"] = Number(row["Anomaly"]);
+  
+  // Mutate the Date field into a Year field by extracting the first four digits.
+  // Backslashes in regexp need to be double-escaped, since they
+  //  will be interpreted twice: once as strings, then again as
+  //  regular expressions. JS also has a /regex/ syntax (with slash
+  //  rather than double quote) that does not require double-escaping,
+  //  but I want you to be aware of this issue.
+  row["Year"] = row["Date"].match("^\\d\\d\\d\\d")[0];
+  
+  return row;
+}
+
+function callback(error, data) {
+  
+  // Group all the temperature readings by Year.
+  temperatures = d3.nest()
+  .key(function (d) { return d.Year; })
+  .entries(data);
+  
+  // Summarize the year-groups to get their mean, min, and max
+  yearSummary = temperatures.map(function (d) {
+    return {
+      Year: Number(d.key),
+      Mean: d3.mean(d.values, d => d.Anomaly),
+      Min: d3.min(d.values, d => d.Anomaly),
+      Max: d3.max(d.values, d => d.Anomaly)
+    };
+  });
+  
+  var padding = 35;
+  
+  // Now create a plot
+  var svg = d3.select("svg")
+  .attr("height", 300 + 2 * padding).attr("width", 400 + 2 * padding)
+  .append("g").attr("transform", "translate(" + padding + "," + padding + ")");
+  
+  var xScale = d3.scaleLinear().domain(d3.extent(yearSummary, d => d.Year)).range([0, 400]);
+  var yScale = d3.scaleLinear()
+  .domain( [d3.min(yearSummary, d => d.Min), d3.max(yearSummary, d => d.Max)] )
+  .range([300, 0]);
+  
+  // Add a ribbon geometry showing the span between min and max yearly anomalies.
+  // It maps data with three aesthetic properties.
+  var ribbonGenerator = d3.area()
+  .x(d => xScale(d.Year))
+  .y0(d => yScale(d.Min))
+  .y1(d => yScale(d.Max));
+  
+  svg.append("path")
+  .attr("d", ribbonGenerator(yearSummary))
+  .style("fill", "#cccccc"); // this color is "grey80" (80% lightness)
+  
+  // Now add a line geometry showing the mean.
+  // This shares one aesthetic property with the ribbon geometry.
+  var lineGenerator = d3.area()
+  .x(d => xScale(d.Year))
+  .y(d => yScale(d.Mean));
+  
+  svg.append("path")
+  .attr("d", lineGenerator(yearSummary))
+  .style("stroke", "#000000")
+  .style("fill", "none");
+  
+  // Add axes
+  svg.append("g").call(d3.axisLeft(yScale));
+  svg.append("g").call(d3.axisBottom(xScale).tickFormat(d3.format("d")))
+  .attr("transform", "translate(0," + (300) + ")");
+  
+  // Add axis labels
+  svg.append("text").attr("transform", "translate(0, -20)").text("Yearly Temperature Anomalies");
+  svg.append("text").attr("transform", "rotate(270) translate(-170, -20)").text("Mean");
+  svg.append("text").attr("transform", "translate(200, 330)").text("Year");
+}
+
+d3.csv("noaa-central-park.csv", mutateRow, callback);
+
+</script>
+</body>
+</html>
