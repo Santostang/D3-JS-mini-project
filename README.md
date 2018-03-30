@@ -27,4 +27,4 @@ There's an important result in statistics called the central limit theorem. It s
 
 Simulate projectile motion under the influence of gravity using a finite approximation, where we estimate a ski jumper's position every 0.2 seconds. (This method was the original use for the ENIAC electronic computer.) Physics review: keep track of the position (displacement), velocity, and acceleration for the x and y dimensions separately.
 
-![MarkDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/Simulate%20Projectile%20Motion/Projectile3.png)
+![MarkDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/Simulate%20Projectile%20Motion/sim_projectile.png)
