@@ -27,9 +27,11 @@ There's an important result in statistics called the central limit theorem. It s
 
 Simulate projectile motion under the influence of gravity using a finite approximation, where we estimate a ski jumper's position every 0.2 seconds. (This method was the original use for the ENIAC electronic computer.) Physics review: keep track of the position (displacement), velocity, and acceleration for the x and y dimensions separately.
 
-![MarkDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/Simulate%20Projectile%20Motion/sim_projectile.png)
+![MarkDown Screenshot](Simulate%20Projectile%20Motion/sim_projectile.png)
 
 5. **Class Flag Design**
 
 Use SVG <path> elements to create a design for the course flag. You must include three enneagrams and position them using the transform attribute. You may use any additional shapes or patterns you can think of as long as you implement them using <path> elements. If you use a tool to generate coordinates for shapes, please cite that tool. You must also include the course motto: ESSE ET
 VIDERI using a <text> element. Hint: for repeated shapes, write the coordinates once, copy it several times, and then use some combination of translate() and scale() transformations to place them.
+
+![MarkDown Screenshot](https://raw.githubusercontent.com/Santostang/D3-JS-mini-project/master/Class%20Flag%20Design/course%20flag.png)
